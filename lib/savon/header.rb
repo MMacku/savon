@@ -60,12 +60,21 @@ module Savon
        return '' unless @globals[:use_wsa_headers]
        convert_to_xml({
          'wsa:Action' => @locals[:soap_action],
-         'wsa:To' => @globals[:endpoint],
          'wsa:MessageID' => "urn:uuid:#{SecureRandom.uuid}",
+         'wsa:ReplyTo' => {
+           'wsa:Address' => 'http://www.w3.org/2005/08/addressing/anonymous'
+         },
+         'wsa:To' => @globals[:endpoint],
          attributes!: {
-          'wsa:MessageID' => {
-            "xmlns:wsa" => "http://schemas.xmlsoap.org/ws/2004/08/addressing"
-          }
+           'wsa:Action' => {
+               "s:mustUnderstand" => "1"
+           },
+           'wsa:To' => {
+               "s:mustUnderstand" => "1"
+           }
+          # 'wsa:MessageID' => {
+          #   "xmlns:wsa" => "http://schemas.xmlsoap.org/ws/2004/08/addressing"
+          # }
          }
        })
     end
